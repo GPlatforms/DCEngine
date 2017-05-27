@@ -24,7 +24,7 @@ AV.Cloud.define('baidu', function(request) {
 AV.Cloud.define('getPlayUrl', function(request) {
     let url = request.params.url
     let res = req('GET', 'http://jxs.s.yunfan.com/remote/parse_kuaibo_new.php?format=high&ext=mp4&url=' + url)
-    return res.getBody('utf8')
+    return JSON.parse(res.getBody('utf8').result)
 })
 
 function toObject(arr) {
