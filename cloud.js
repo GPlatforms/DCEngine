@@ -52,7 +52,7 @@ function fetchSeriesItem(content) {
         let query = new AV.Query('series')
         query.equalTo('objectId', content)
         query.first().then(function(item) {
-            res([item])
+            res(item)
         })
     })
 }
