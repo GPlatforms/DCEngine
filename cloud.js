@@ -30,7 +30,13 @@ AV.Cloud.define('getPlayUrl', function(request) {
 AV.Cloud.define('getWatchHistory', function(request) {
     let query = new AV.Query('record').equalTo('user_id', request.currentUser)
     return query.first().then(function(results) {
-        return Promise.all(results.get('list').map(n => fillSeriesItem(n)))
+        return new Promise(function(res){
+            Promise.all(results.get('list').map(n => fillSeriesItem(n))).then(function(list){
+                results.set('list', list)
+                res(results)
+            })
+        })
+        
     }).catch(function(error) {
         throw error
     })
@@ -40,7 +46,7 @@ function fillSeriesItem(content) {
     return new Promise(function(res) {
         let query = new AV.Query('series').equalTo('objectId', content.series.id)
         query.first().then(function(item) {
-            content.series = item;
+            content.series = item.toJSON();
             res(content)
         })
     })
