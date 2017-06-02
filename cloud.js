@@ -28,8 +28,7 @@ AV.Cloud.define('getPlayUrl', function(request) {
 })
 
 AV.Cloud.define('getWatchHistory', function(request) {
-    let id = request.params.id
-    let query = new AV.Query('record').equalTo('user_id', AV.Object.createWithoutData('_User', id))
+    let query = new AV.Query('record').equalTo('user_id', request.currentUser)
     return query.first().then(function(results) {
         return Promise.all(results.get('list').map(n => fillSeriesItem(n)))
     }).catch(function(error) {
