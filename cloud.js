@@ -32,7 +32,7 @@ AV.Cloud.define('getWatchHistory', function(request) {
     return query.first().then(function(results) {
         return new Promise(function(res, rej){
             if(results == null || typeof(results) == 'undefined') {
-                res({})
+                res(null)
             } else {
                 Promise.all(results.get('list').map(n => fillSeriesItem(n))).then(function(list){
                     results.set('list', list)
