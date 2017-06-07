@@ -27,6 +27,30 @@ AV.Cloud.define('getPlayUrl', function(request) {
     return JSON.parse(res.getBody('utf8'))
 })
 
+AV.Cloud.define('doSearch', function(request) {
+    var searchString = request.params.text
+    let query = new AV.Query('search').equalTo('text', searchString)
+    return query.first().then(function(firstItem) {
+        return new Promise(function(res, rej){
+            var search = AV.Object.extend('search')
+            var searchItem
+            if(firstItem == null || typeof(firstItem) == 'undefined') {
+                searchItem = new search()
+                searchItem.set('num', 1)
+                searchItem.set('text', searchString)
+            } else {
+                searchItem = firstItem
+                searchItem.increment('num', 1)
+            }
+            searchItem.save()
+            query = new AV.Query('series').contains('detail.title', searchString)
+            query.limit(request.params.limit || 10).skip(request.params.skip || 0).find().then(function(results) {
+                res(results)
+            })
+        })
+    })
+})
+
 AV.Cloud.define('getWatchHistory', function(request) {
     let query = new AV.Query('record').equalTo('user_id', request.currentUser)
     return query.first().then(function(results) {
