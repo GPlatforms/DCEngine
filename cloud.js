@@ -44,6 +44,9 @@ AV.Cloud.define('doSearch', function(request) {
             }
             searchItem.save()
             query = new AV.Query('series').contains('detail.title', searchString)
+            if(typeof(request.params.type) != 'undefined') {
+                query.equalTo('type', request.params.type)
+            }
             query.limit(request.params.limit || 10).skip(request.params.skip || 0).find().then(function(results) {
                 res(results)
             })
